@@ -3,88 +3,76 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
-
     <TextView
+        android:text="红绿灯信息管理"
         android:textSize="30sp"
-        android:text="生成付款二维码"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#0b0d0b"/>
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView
-            android:text="车辆编号:"
-            android:textSize="30sp"
             android:layout_width="0dp"
+            android:textAlignment="center"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:textSize="30sp"
+            android:text="排序:"
+            />
         <Spinner
-            android:id="@+id/numSpinner"
+            android:id="@+id/spinner"
             android:layout_width="0dp"
-            android:layout_weight="3"
+            android:layout_weight="5"
             android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <TextView
-        android:text="付款金额:"
-        android:textSize="30sp"
-        android:layout_width="0dp"
-        android:layout_weight="2"
-        android:layout_height="wrap_content" />
-    <EditText
-        android:id="@+id/money"
-        android:layout_width="0dp"
-        android:layout_weight="3"
-        android:layout_height="wrap_content"
-        />
-        <TextView
+        <Button
+            android:id="@+id/find"
             android:textSize="30sp"
-            android:text="元"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:text="二维码更新周期:"
-            android:textSize="30sp"
+            android:text="查询"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/time"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:textSize="30sp"
-            android:text="秒"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
     </LinearLayout>
-    <Button
-        android:id="@+id/make"
-        android:text="生成"
-        android:textSize="30sp"
-        android:layout_gravity="center"
-        android:layout_width="200dp"
+    <TableLayout
+        android:padding="15dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="makeImage"
-        />
+        android:divider="@drawable/row"
+        android:showDividers="beginning|middle|end">
+        <TableRow
+            android:divider="@drawable/line"
+            android:showDividers="beginning|middle|end">
+            <TextView
+                android:text="路口"
+                android:layout_width="0dp"
+                android:textAlignment="center"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="0dp"
+                android:textAlignment="center"
+                android:text="红灯时长"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="0dp"
+                android:textAlignment="center"
+                android:text="黄灯时长"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="0dp"
+                android:textAlignment="center"
+                android:text="绿灯时长"
+                android:layout_weight="1"/>
+        </TableRow>
+
+            <ListView
+                android:id="@+id/lv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:footerDividersEnabled="false"
+                android:headerDividersEnabled="false"
+                />
+    </TableLayout>
 </LinearLayout>
