@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.GdActivity">
+
+    <com.amap.api.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.amap.api.maps.MapView>
+    <TextView
+        android:id="@+id/cj_txt"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:textSize="20sp"
+        android:text="hello word"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageButton
+        android:id="@+id/cj_coating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:src="@mipmap/map_marker"
+        />
+    <ImageButton
+        android:id="@+id/cj_return"
+        android:src="@mipmap/arrow_left"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageButton
+        android:layout_below="@id/cj_coating"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/layer_change"
+        android:id="@+id/cj_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
