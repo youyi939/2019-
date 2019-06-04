@@ -1,155 +1,78 @@
-package com.example.youyi.trafficlightmanagement2;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+package com.example.youyi.parkingmeter;
+import android.content.SharedPreferences;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Spinner;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
+import android.widget.Chronometer;
+import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
-    private List<Road> roads ;
-    private Spinner spinner;
-    private Button find;
-    private ListView listView;
-    private ListViewAdapter listAdapter;
+
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+    private Button button;
+    private Button button2;
+    private Chronometer chronometer;
+    private TextView textViewCost;
+    private int rate = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        roads = new ArrayList<>();
-        String[] name = new String[]{
-                "路口升序",
-                "路口降序",
-                "红灯升序",
-                "红灯降序",
-                "绿灯升序",
-                "绿灯降序",
-                "黄灯升序",
-                "黄灯降序"
-        };
-        initData();                         //初始化数据
 
+        button = findViewById(R.id.start);
+        button2 = findViewById(R.id.settle);
+        chronometer = findViewById(R.id.chronometer);
+        textViewCost = findViewById(R.id.cost);
+        int hour = (int)((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000/ 60);
+        chronometer.setFormat("0"+String.valueOf(hour) + ":%s" );
+        pref = getSharedPreferences("time",MODE_PRIVATE);
 
-        find = findViewById(R.id.find);
-        spinner = findViewById(R.id.spinner);
-        listView = findViewById(R.id.lv);
-        listAdapter = new ListViewAdapter(MainActivity.this,R.layout.item,roads);
-        listView.setAdapter(listAdapter);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,name);
-        spinner.setAdapter(adapter);
-        find.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                switch (spinner.getSelectedItem().toString()){
-                    case "路口升序":
-                        Collections.sort(roads, new Comparator<Road>() {
+                if ("start".equals(button.getText())){
+                        chronometer.setBase(SystemClock.elapsedRealtime());
+                        chronometer.start();
+                        final int time = (int) chronometer.getBase( );
+                        editor = getSharedPreferences("time",MODE_PRIVATE).edit();
+                        new Thread(new Runnable() {
                             @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getNumber();
-                                Integer b = o2.getNumber();
-                                return (int)a-(int)b;
+                            public void run() {
+                                editor.putInt("time",time);
+                                editor.apply();
                             }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "路口降序":
-                        Collections.sort(roads, new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getNumber();
-                                Integer b = o2.getNumber();
-                                return (int)b-(int)a;
-                            }
-                        });
-
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "红灯升序":
-                        Collections.sort(roads,new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getRed();
-                                Integer b = o2.getRed();
-                                return a-b;
-                            }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "红灯降序":
-                        Collections.sort(roads,new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getRed();
-                                Integer b = o2.getRed();
-                                return b-a;
-                            }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "黄灯升序":
-                        Collections.sort(roads,new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getYellow();
-                                Integer b = o2.getYellow();
-                                return a-b;
-                            }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "黄灯降序":
-                        Collections.sort(roads,new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getYellow();
-                                Integer b = o2.getYellow();
-                                return b-a;
-                            }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "绿灯升序":
-                        Collections.sort(roads,new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getGreen();
-                                Integer b = o2.getGreen();
-                                return a-b;
-                            }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                    case "绿灯降序":
-                        Collections.sort(roads,new Comparator<Road>() {
-                            @Override
-                            public int compare(Road o1, Road o2) {
-                                Integer a = o1.getGreen();
-                                Integer b = o2.getGreen();
-                                return b-a;
-                            }
-                        });
-                        listAdapter.notifyDataSetChanged();
-                        break;
-                        default:
-                            break;
+                        }).start();
+                    button.setText("end");
+                    textViewCost.setText("计时中，按结算按钮统计付费");
+                }else {
+                    button.setText("start");
+                    int cost = 0;
+                    cost = (int) (SystemClock.elapsedRealtime() - chronometer.getBase())/(3600*1000);
+                    System.out.println(cost);
+                    textViewCost.setText("需缴费用:"+(cost + 1)*rate+"元");
+                    chronometer.setBase(SystemClock.elapsedRealtime());
+                    chronometer.stop();
+                    pref.edit().clear().commit();
                 }
             }
         });
-    }
+        int time2 = pref.getInt("time",0);
+        if (time2 != 0){
+            chronometer.setBase(time2);
+            chronometer.start();
+            button.setText("end");
+            textViewCost.setText("计时中，按结算按钮统计付费");
+        }
 
-
-    private void initData(){
-        roads.add(new Road(1,9,9,9));
-        roads.add(new Road(2,8,8,8));
-        roads.add(new Road(3,7,8,7));
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textViewCost.setText("已结算，需缴费用:0元");
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.stop();
+            }
+        });
     }
 }
