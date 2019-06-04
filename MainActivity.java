@@ -1,78 +1,61 @@
-package com.example.youyi.parkingmeter;
-import android.content.SharedPreferences;
-import android.os.SystemClock;
+package com.example.youyi.recyclerview2;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Chronometer;
-import android.widget.TextView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-    private Button button;
-    private Button button2;
-    private Chronometer chronometer;
-    private TextView textViewCost;
-    private int rate = 5;
+    private RecyclerView recyclerView_up;
+    private RecyclerView recyclerView_down;
+    private List<String> listUp = new ArrayList<>();
+    private List<String> listDown = new ArrayList<>();
+    DownAdapter adapter_down;
+    UpAdapter upAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView_down = findViewById(R.id.recyclerView_down);
+        recyclerView_up = findViewById(R.id.recyclerView_up);
 
-        button = findViewById(R.id.start);
-        button2 = findViewById(R.id.settle);
-        chronometer = findViewById(R.id.chronometer);
-        textViewCost = findViewById(R.id.cost);
-        int hour = (int)((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000/ 60);
-        chronometer.setFormat("0"+String.valueOf(hour) + ":%s" );
-        pref = getSharedPreferences("time",MODE_PRIVATE);
+        initData();             //初始化数据
+        initView();
+    }
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if ("start".equals(button.getText())){
-                        chronometer.setBase(SystemClock.elapsedRealtime());
-                        chronometer.start();
-                        final int time = (int) chronometer.getBase( );
-                        editor = getSharedPreferences("time",MODE_PRIVATE).edit();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                editor.putInt("time",time);
-                                editor.apply();
-                            }
-                        }).start();
-                    button.setText("end");
-                    textViewCost.setText("计时中，按结算按钮统计付费");
-                }else {
-                    button.setText("start");
-                    int cost = 0;
-                    cost = (int) (SystemClock.elapsedRealtime() - chronometer.getBase())/(3600*1000);
-                    System.out.println(cost);
-                    textViewCost.setText("需缴费用:"+(cost + 1)*rate+"元");
-                    chronometer.setBase(SystemClock.elapsedRealtime());
-                    chronometer.stop();
-                    pref.edit().clear().commit();
-                }
-            }
-        });
-        int time2 = pref.getInt("time",0);
-        if (time2 != 0){
-            chronometer.setBase(time2);
-            chronometer.start();
-            button.setText("end");
-            textViewCost.setText("计时中，按结算按钮统计付费");
-        }
+    public void initView(){
+        upAdapter = new UpAdapter(listUp,null,listDown);
+        adapter_down = new DownAdapter(listDown,listUp,upAdapter);
+        upAdapter.setDownAdapter(adapter_down);
+        GridLayoutManager gridLayoutManagerDown2 = new GridLayoutManager(this, 5);
+        GridLayoutManager gridLayoutManagerDown = new GridLayoutManager(this, 5);
+        recyclerView_up.setLayoutManager(gridLayoutManagerDown2);
 
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textViewCost.setText("已结算，需缴费用:0元");
-                chronometer.setBase(SystemClock.elapsedRealtime());
-                chronometer.stop();
-            }
-        });
+        recyclerView_down.setLayoutManager(gridLayoutManagerDown);
+        recyclerView_up.setAdapter(upAdapter);
+        recyclerView_down.setAdapter(adapter_down);
+    }
+
+    public void initUp(){
+        GridLayoutManager gridLayoutManagerDown2 = new GridLayoutManager(this, 5);
+        upAdapter = new UpAdapter(listUp,adapter_down,listDown);
+        recyclerView_up.setLayoutManager(gridLayoutManagerDown2);
+        recyclerView_up.setAdapter(upAdapter);
+
+    }
+
+    public void  initData(){
+        listDown.add("反浩克");
+        listDown.add("浪子");
+        listDown.add("MK1");
+        listDown.add("鹰眼");
+        listDown.add("蜘蛛");
+        listUp.add("路人甲");
+        listUp.add("炮灰乙");
+        listUp.add("流氓丙");
+        listUp.add("白痴丁");
     }
 }
